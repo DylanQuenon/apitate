@@ -17,6 +17,8 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
+use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
+use ApiPlatform\Metadata\ApiFilter;
 
 #[ORM\Entity(repositoryClass: GalleryRepository::class)]
 #[ApiResource(
@@ -30,8 +32,13 @@ use Symfony\Component\Serializer\Annotation\Groups;
         new Patch(),
         new Put(),
         new GetCollection()
-    ]
+    ],
+
+
 )]
+#[ApiFilter(SearchFilter::class, properties: [
+    'tag.name' => 'exact'
+])]
 
 class Gallery
 {
@@ -41,20 +48,20 @@ class Gallery
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups(['media_object:read','gallery_read'])]
+    #[Groups(['gallery_read'])]
     private ?string $name = null;
 
     /**
      * @var Collection<int, Tags>
      */
     #[ORM\ManyToMany(targetEntity: Tags::class)]
-     #[Groups(['media_object:read','gallery_read'])]
+     #[Groups(['gallery_read'])]
     private Collection $tag;
 
     #[ORM\ManyToOne(targetEntity: MediaObject::class)]
     #[ORM\JoinColumn(nullable: true)]
     #[ApiProperty(types: ['https://schema.org/image'])]
-     #[Groups(['media_object:read','gallery_read'])]
+     #[Groups(['gallery_read'])]
     public ?MediaObject $image = null;
 
     public function __construct()

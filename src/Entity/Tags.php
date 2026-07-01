@@ -37,7 +37,7 @@ class Tags
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups(['tags_read'])]
+    #[Groups(['tags_read', 'gallery_read'])]
     #[Assert\NotBlank(message: "Le nom du tag est obligatoire.")]
     #[Assert\Length(
         min: 2,

@@ -24,7 +24,7 @@ use Vich\UploaderBundle\Mapping\Attribute as Vich;
 #[Vich\Uploadable]
 #[ORM\Entity]
 #[ApiResource(
-    normalizationContext: ['groups' => ['media_object:read','gallery_read']],
+    normalizationContext: ['groups' => ['media_object_read']],
     types: ['https://schema.org/MediaObject'],
     outputFormats: ['jsonld' => ['application/ld+json']],
     operations: [
@@ -60,12 +60,12 @@ class MediaObject
     private ?int $id = null;
 
     #[ApiProperty(types: ['https://schema.org/contentUrl'], writable: false)]
-    #[Groups(['media_object:read','gallery_read'])]
+    #[Groups(['media_object_read'])]
     public ?string $contentUrl = null;
 
     #[Vich\UploadableField(mapping: 'media_object', fileNameProperty: 'filePath')]
     #[Assert\NotNull]
-     #[Groups(['media_object:read','gallery_read'])]
+     #[Groups(['media_object:read',])]
     public ?File $file = null;
 
     #[ApiProperty(writable: false)]
