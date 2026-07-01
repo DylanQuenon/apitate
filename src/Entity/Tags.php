@@ -85,6 +85,11 @@ class Tags
     }
 
 
+    /**
+     * Initialize the tags slug
+     *
+     * @return void
+     */
     #[ORM\PrePersist]
     #[ORM\PreUpdate]
     public function initializeSlug(): void
