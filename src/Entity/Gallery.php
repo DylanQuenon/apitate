@@ -37,7 +37,7 @@ use ApiPlatform\Metadata\ApiFilter;
 
 )]
 #[ApiFilter(SearchFilter::class, properties: [
-    'tag.name' => 'exact'
+    'tag.slug' => 'exact'
 ])]
 
 class Gallery

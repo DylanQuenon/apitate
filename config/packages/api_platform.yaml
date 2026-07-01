@@ -11,7 +11,7 @@ api_platform:
         html: ['text/html']
     defaults:
         pagination_enabled: true
-        pagination_items_per_page: 1
+        pagination_items_per_page: 24
         pagination_client_items_per_page: true
         pagination_maximum_items_per_page: 100
         stateless: true

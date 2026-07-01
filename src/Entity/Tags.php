@@ -10,11 +10,13 @@ use ApiPlatform\Metadata\Patch;
 use ApiPlatform\Metadata\Post;
 use ApiPlatform\Metadata\Put;
 use App\Repository\TagsRepository;
+use Cocur\Slugify\Slugify;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: TagsRepository::class)]
+#[ORM\HasLifecycleCallbacks]
 #[ApiResource(
     normalizationContext:[
         'groups' => ['tags_read']
@@ -46,6 +48,11 @@ class Tags
         maxMessage: "Le nom ne peut pas dépasser {{ limit }} caractères."
     )]
     private ?string $name = null;
+    
+    
+    #[ORM\Column(length: 255)]
+    #[Groups(['tags_read', 'gallery_read'])]
+    private ?string $slug=null;
 
     public function getId(): ?int
     {
@@ -63,5 +70,29 @@ class Tags
         $this->name = $name;
 
         return $this;
+    }
+
+    public function getSlug(): ?string
+    {
+        return $this->slug;
+    }
+
+    public function setSlug(string $slug): static
+    {
+        $this->slug = $slug;
+
+        return $this;
+    }
+
+
+    #[ORM\PrePersist]
+    #[ORM\PreUpdate]
+    public function initializeSlug(): void
+    {
+        if(empty($this->slug))
+        {
+            $slugify = new Slugify();
+            $this->slug = $slugify->slugify($this->name);
+        }
     }
 }
