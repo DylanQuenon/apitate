@@ -2,6 +2,9 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Doctrine\Orm\Filter\OrderFilter;
+use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
+use ApiPlatform\Metadata\ApiFilter;
 use ApiPlatform\Metadata\ApiProperty;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\Delete;
@@ -15,12 +18,12 @@ use App\Entity\Tags;
 use App\Repository\GalleryRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
-use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
-use ApiPlatform\Metadata\ApiFilter;
 
 #[ORM\Entity(repositoryClass: GalleryRepository::class)]
+#[ORM\HasLifecycleCallbacks]
 #[ApiResource(
     normalizationContext:[
         'groups' => ['gallery_read']
@@ -38,6 +41,9 @@ use ApiPlatform\Metadata\ApiFilter;
 )]
 #[ApiFilter(SearchFilter::class, properties: [
     'tag.slug' => 'exact'
+])]
+#[ApiFilter(OrderFilter::class, properties: [
+    'publishedAt'
 ])]
 
 class Gallery
@@ -61,12 +67,30 @@ class Gallery
     #[ORM\ManyToOne(targetEntity: MediaObject::class)]
     #[ORM\JoinColumn(nullable: true)]
     #[ApiProperty(types: ['https://schema.org/image'])]
-     #[Groups(['gallery_read'])]
+    #[Groups(['gallery_read'])]
     public ?MediaObject $image = null;
+    
+    #[ORM\Column(type: Types::DATETIME_MUTABLE)]
+    #[Groups(['gallery_read'])]
+    private $publishedAt = null;
 
     public function __construct()
     {
         $this->tag = new ArrayCollection();
+    }
+
+    #[ORM\PrePersist]
+    /**
+     * Automatically set the publication date on the current date
+     *
+     * @return void
+     */
+    public function prePersist(): void
+    {
+        if(empty($this->publishedAt))
+        {
+            $this->publishedAt = new \DateTime();
+        }
     }
 
     public function getId(): ?int
@@ -106,6 +130,18 @@ class Gallery
     public function removeTag(Tags $tag): static
     {
         $this->tag->removeElement($tag);
+
+        return $this;
+    }
+
+    public function getPublishedAt(): ?\DateTimeInterface
+    {
+        return $this->publishedAt;
+    }
+
+    public function setPublishedAt($publishedAt): self
+    {
+        $this->publishedAt = $publishedAt;
 
         return $this;
     }
