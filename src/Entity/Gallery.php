@@ -19,6 +19,7 @@ use App\Repository\GalleryRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
+use Symfony\Component\Validator\Constraints as Assert;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 
@@ -55,13 +56,15 @@ class Gallery
 
     #[ORM\Column(length: 255)]
     #[Groups(['gallery_read'])]
+    #[Assert\NotBlank(message: "Le nom est obligatoire")]
     private ?string $name = null;
 
     /**
      * @var Collection<int, Tags>
      */
     #[ORM\ManyToMany(targetEntity: Tags::class)]
-     #[Groups(['gallery_read'])]
+    #[Groups(['gallery_read'])]
+    #[Assert\NotBlank(message: "Le tag est obligatoire")]
     private Collection $tag;
 
     #[ORM\ManyToOne(targetEntity: MediaObject::class)]
@@ -73,6 +76,13 @@ class Gallery
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
     #[Groups(['gallery_read'])]
     private $publishedAt = null;
+
+    #[ORM\Column(length: 255)]
+    #[Assert\NotBlank(message: "La description est obligatoire")]
+    private ?string $caption = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $shootingUrl = null;
 
     public function __construct()
     {
@@ -142,6 +152,30 @@ class Gallery
     public function setPublishedAt($publishedAt): self
     {
         $this->publishedAt = $publishedAt;
+
+        return $this;
+    }
+
+    public function getCaption(): ?string
+    {
+        return $this->caption;
+    }
+
+    public function setCaption(string $caption): static
+    {
+        $this->caption = $caption;
+
+        return $this;
+    }
+
+    public function getShootingUrl(): ?string
+    {
+        return $this->shootingUrl;
+    }
+
+    public function setShootingUrl(?string $shootingUrl): static
+    {
+        $this->shootingUrl = $shootingUrl;
 
         return $this;
     }
