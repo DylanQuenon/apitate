@@ -56,7 +56,13 @@ class Gallery
 
     #[ORM\Column(length: 255)]
     #[Groups(['gallery_read'])]
-    #[Assert\NotBlank(message: "Le nom est obligatoire")]
+    #[Assert\NotBlank(message: "The name is required.")]
+    #[Assert\Length(
+            min: 2,
+            max: 50,
+            minMessage: "The name must be at least {{ limit }} characters long.",
+            maxMessage: "The name cannot be longer than {{ limit }} characters."
+        )]
     private ?string $name = null;
 
     /**
@@ -64,7 +70,7 @@ class Gallery
      */
     #[ORM\ManyToMany(targetEntity: Tags::class)]
     #[Groups(['gallery_read'])]
-    #[Assert\NotBlank(message: "Le tag est obligatoire")]
+    #[Assert\NotBlank(message: "The tags are required.")]
     private Collection $tag;
 
     #[ORM\ManyToOne(targetEntity: MediaObject::class)]
@@ -78,7 +84,7 @@ class Gallery
     private $publishedAt = null;
 
     #[ORM\Column(length: 255)]
-    #[Assert\NotBlank(message: "La description est obligatoire")]
+    #[Assert\NotBlank(message: "the caption is required")]
     private ?string $caption = null;
 
     #[ORM\Column(length: 255, nullable: true)]

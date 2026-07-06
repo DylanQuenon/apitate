@@ -40,13 +40,13 @@ class Tags
 
     #[ORM\Column(length: 255)]
     #[Groups(['tags_read', 'gallery_read'])]
-    #[Assert\NotBlank(message: "Le nom du tag est obligatoire.")]
+    #[Assert\NotBlank(message: "The tag name is required.")]
     #[Assert\Length(
-        min: 2,
-        max: 50,
-        minMessage: "Le nom doit faire au moins {{ limit }} caractères.",
-        maxMessage: "Le nom ne peut pas dépasser {{ limit }} caractères."
-    )]
+            min: 2,
+            max: 50,
+            minMessage: "The name must be at least {{ limit }} characters long.",
+            maxMessage: "The name cannot be longer than {{ limit }} characters."
+        )]
     private ?string $name = null;
     
     
