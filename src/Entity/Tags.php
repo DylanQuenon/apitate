@@ -46,7 +46,7 @@ class Tags
             max: 50,
             minMessage: "The name must be at least {{ limit }} characters long.",
             maxMessage: "The name cannot be longer than {{ limit }} characters."
-        )]
+    )]
     private ?string $name = null;
     
     

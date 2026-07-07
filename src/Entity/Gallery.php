@@ -37,8 +37,6 @@ use Symfony\Component\Serializer\Annotation\Groups;
         new Put(),
         new GetCollection()
     ],
-
-
 )]
 #[ApiFilter(SearchFilter::class, properties: [
     'tag.slug' => 'exact'
@@ -55,7 +53,7 @@ class Gallery
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups(['gallery_read'])]
+    #[Groups(['gallery_read', 'tags_read'])]
     #[Assert\NotBlank(message: "The name is required.")]
     #[Assert\Length(
             min: 2,
@@ -69,25 +67,28 @@ class Gallery
      * @var Collection<int, Tags>
      */
     #[ORM\ManyToMany(targetEntity: Tags::class)]
-    #[Groups(['gallery_read'])]
+    #[Groups(['gallery_read', 'tags_read'])]
     #[Assert\NotBlank(message: "The tags are required.")]
     private Collection $tag;
 
     #[ORM\ManyToOne(targetEntity: MediaObject::class)]
     #[ORM\JoinColumn(nullable: true)]
     #[ApiProperty(types: ['https://schema.org/image'])]
-    #[Groups(['gallery_read'])]
+    #[Groups(['gallery_read','tags_read'])]
+    #[Assert\NotBlank(message: "The image is required")]
     public ?MediaObject $image = null;
     
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
-    #[Groups(['gallery_read'])]
+    #[Groups(['gallery_read','tags_read'])]
     private $publishedAt = null;
 
     #[ORM\Column(length: 255)]
-    #[Assert\NotBlank(message: "the caption is required")]
+    #[Groups(['gallery_read','tags_read'])]
+    #[Assert\NotBlank(message: "The caption is required")]
     private ?string $caption = null;
 
     #[ORM\Column(length: 255, nullable: true)]
+    #[Groups(['gallery_read','tags_read'])]
     private ?string $shootingUrl = null;
 
     public function __construct()
@@ -185,4 +186,18 @@ class Gallery
 
         return $this;
     }
+
+    public function getImage(): ?MediaObject
+    {
+        return $this->image;
+    }
+
+    public function setCover(MediaObject $image): static
+    {
+        $this->image = $image;
+
+        return $this;
+    }
+
+
 }
