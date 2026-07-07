@@ -13,10 +13,14 @@ use App\Repository\AlbumsRepository;
 use DateTimeInterface;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: AlbumsRepository::class)]
 #[ApiResource(
+      normalizationContext:[
+        'groups' => ['albums_read']
+    ],
 
     operations:[
         new Get(),
@@ -37,6 +41,7 @@ class Albums
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(['albums_read'])]
     #[Assert\NotBlank(message: "The name is required.")]
     #[Assert\Length(
             min: 2,
@@ -48,9 +53,11 @@ class Albums
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
     #[Assert\NotBlank(message: "The release date is required.")]
     #[Assert\Type(type: "datetime", message: "The release date must be in the format YYYY-MM-DD")]
+    #[Groups(['albums_read'])]
     private $releasedAt = null;
 
     #[ORM\Column(type: Types::TEXT)]
+    #[Groups(['albums_read'])]
     #[Assert\NotBlank(message: "The description is required")]
     #[Assert\Length(
         min: 2,
@@ -62,10 +69,12 @@ class Albums
     #[ORM\Column(length: 255)]
     #[Assert\NotBlank(message: "The streaming URL is required")]
     #[Assert\Url(message: "The streaming URL must be a valid URL")]
+    #[Groups(['albums_read'])]
     private ?string $streamUrl = null;
 
     #[ORM\OneToOne(cascade: ['persist', 'remove'])]
     #[ORM\JoinColumn(nullable: false)]
+    #[Groups(['albums_read'])]
     private ?MediaObject $cover = null;
 
     public function getId(): ?int
