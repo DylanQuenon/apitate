@@ -60,7 +60,7 @@ class MediaObject
     private ?int $id = null;
 
     #[ApiProperty(types: ['https://schema.org/contentUrl'], writable: false)]
-    #[Groups(['media_object_read','gallery_read','albums_read'])]
+    #[Groups(['media_object_read','gallery_read','albums_read','news_read'])]
     public ?string $contentUrl = null;
 
     #[Vich\UploadableField(mapping: 'media_object', fileNameProperty: 'filePath')]

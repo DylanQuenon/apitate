@@ -39,7 +39,8 @@ use Symfony\Component\Serializer\Annotation\Groups;
     ],
 )]
 #[ApiFilter(SearchFilter::class, properties: [
-    'tag.slug' => 'exact'
+    'tag.slug' => 'exact',
+    'name'=> 'partial'
 ])]
 #[ApiFilter(OrderFilter::class, properties: [
     'publishedAt'
@@ -57,7 +58,7 @@ class Gallery
     #[Assert\NotBlank(message: "The name is required.")]
     #[Assert\Length(
             min: 2,
-            max: 50,
+            max: 255,
             minMessage: "The name must be at least {{ limit }} characters long.",
             maxMessage: "The name cannot be longer than {{ limit }} characters."
         )]

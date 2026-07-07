@@ -2,6 +2,8 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
+use ApiPlatform\Metadata\ApiFilter;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\Delete;
 use ApiPlatform\Metadata\Get;
@@ -33,6 +35,9 @@ use Symfony\Component\Validator\Constraints as Assert;
      order: ['releasedAt' => 'DESC'] //default sorting
 
 )]
+#[ApiFilter(SearchFilter::class, properties: [
+    'name' => 'partial'
+])]
 class Albums
 {
     #[ORM\Id]
@@ -45,7 +50,9 @@ class Albums
     #[Assert\NotBlank(message: "The name is required.")]
     #[Assert\Length(
             min: 2,
-            minMessage: "The name must be at least {{ limit }} characters long."
+            minMessage: "The name must be at least {{ limit }} characters long.",
+            max: 255,
+            maxMessage: "The name cannot be longer than {{ limit }} characters."
     )]
     private ?string $name = null;
 
@@ -61,7 +68,9 @@ class Albums
     #[Assert\NotBlank(message: "The description is required")]
     #[Assert\Length(
         min: 2,
-        minMessage: "The name must be at least {{ limit }} characters long."
+        minMessage: "The description must be at least {{ limit }} characters long.",
+        max: 500,
+        maxMessage: "The description cannot be longer than {{ limit }} characters."
     )]
     private ?string $description = null;
 
